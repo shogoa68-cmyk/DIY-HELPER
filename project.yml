@@ -1,0 +1,52 @@
+# XcodeGen の設定ファイル。Mac で `xcodegen generate` すると KabeBase.xcodeproj ができる。
+name: KabeBase
+options:
+  bundleIdPrefix: com.example.kabebase
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+packages:
+  KabeBaseCore:
+    path: Packages/KabeBaseCore
+targets:
+  KabeBase:
+    type: application
+    platform: iOS
+    sources:
+      - path: KabeBase
+    dependencies:
+      - package: KabeBaseCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.kabebase.app
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: KabeBase
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  KabeBaseTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: KabeBaseTests
+    dependencies:
+      - target: KabeBase
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  KabeBase:
+    build:
+      targets:
+        KabeBase: all
+    test:
+      targets:
+        - KabeBaseTests
+        - package: KabeBaseCore/KabeBaseCoreTests
