@@ -1,10 +1,10 @@
 import SwiftUI
 
-/// 4つのタブ。壁マップは Step 3、履歴は Step 4 で作る。
+/// 4つのタブ。履歴は Step 4 で作る。
 struct RootTabView: View {
     var body: some View {
         TabView {
-            PlaceholderView(title: "壁マップ", systemImage: "square.grid.3x3", step: "Step 3")
+            RoomListView()
                 .tabItem { Label("壁マップ", systemImage: "square.grid.3x3") }
 
             FasteningNavigatorView()

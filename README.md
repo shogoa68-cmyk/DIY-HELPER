@@ -16,7 +16,7 @@ Packages/KabeBaseCore/   画面に依存しない計算エンジン＆DIY規格�
     Standards/           1×4・2×4・合板・ビス長・ドリル径などのマスタ
     Fastening/           ビス長・下穴径・石膏ボードアンカー判定
     TensionPost/         2×4突っ張り柱のカット長
-    WallMap/             2点キャリブレーション・間柱グリッド計算
+    WallMap/             2点キャリブレーション・間柱グリッド・キャンバス座標変換
     Plan/                無料／Pro の制限ルール
   Tests/KabeBaseCoreTests/  計算エンジンのユニットテスト
 KabeBase/                iOS アプリ本体
@@ -24,6 +24,7 @@ KabeBase/                iOS アプリ本体
   Components/            チップ選択・折り返しレイアウト・結果カードなど共通部品
   Features/Fastening/    タブ2 ビス・下穴ナビ
   Features/TensionPost/  タブ3 2×4突っ張り計算
+  Features/WallMap/      タブ1 部屋一覧・壁一覧・壁マップキャンバス
   Models/                SwiftData モデル（Room / WallSurface / WallAnnotation / DiyCalcRecord）
   Services/ImageStore    写真を Documents に JPEG 保存
 KabeBaseTests/           SwiftData モデルのテスト
@@ -51,5 +52,5 @@ cd Packages/KabeBaseCore && swift test
 
 - [x] Step 1：プロジェクト雛形・SwiftData モデル・計算エンジン・ユニットテスト
 - [x] Step 2：タブ2（ビス・下穴ナビ）とタブ3（2×4突っ張り）の画面
-- [ ] Step 3：タブ1（壁マップキャンバス）
+- [x] Step 3：タブ1（壁マップキャンバス）
 - [ ] Step 4：計算→ピン転記、タブ4（履歴・原状回復）、StoreKit 2 の Pro 制限

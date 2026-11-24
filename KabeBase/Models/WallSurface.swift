@@ -74,3 +74,12 @@ final class WallSurface {
     /// 施工ピンだけ
     var pins: [WallAnnotation] { annotations.filter { $0.kind == .pin } }
 }
+
+extension WallSurface {
+    /// 壁を消す前に、端末に保存した写真ファイルも消す
+    func deletePhotoFile(store: ImageStore = .shared) {
+        guard let photoFileName else { return }
+        store.delete(fileName: photoFileName)
+        self.photoFileName = nil
+    }
+}
