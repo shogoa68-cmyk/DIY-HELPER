@@ -6,7 +6,19 @@ import KabeBaseCore
 struct RoomDetailView: View {
     @Bindable var room: Room
     @Environment(\.modelContext) private var modelContext
+    @Environment(ProStore.self) private var proStore
+    /// すべての部屋の壁（無料版の上限チェック用）
+    @Query private var allWalls: [WallSurface]
     @State private var isAddingWall = false
+    @State private var isPaywallPresented = false
+
+    private func requestAddWall() {
+        if ProPlanPolicy.canAddWall(currentWallCount: allWalls.count, isPro: proStore.isPro) {
+            isAddingWall = true
+        } else {
+            isPaywallPresented = true
+        }
+    }
 
     private var sortedWalls: [WallSurface] {
         room.walls.sorted { $0.createdAt < $1.createdAt }
@@ -17,10 +29,10 @@ struct RoomDetailView: View {
             Section {
                 Toggle("賃貸の部屋", isOn: $room.isRental)
             }
-            Section("壁") {
+            Section {
                 if sortedWalls.isEmpty {
                     Button {
-                        isAddingWall = true
+                        requestAddWall()
                     } label: {
                         Label("壁を追加する", systemImage: "plus.rectangle.on.rectangle")
                     }
@@ -32,13 +44,19 @@ struct RoomDetailView: View {
                     }
                     .onDelete(perform: deleteWalls)
                 }
+            } header: {
+                Text("壁")
+            } footer: {
+                if let remaining = ProPlanPolicy.remainingWalls(currentWallCount: allWalls.count, isPro: proStore.isPro) {
+                    Text("無料版：壁はあと\(remaining)面登録できます（全部屋で\(ProPlanPolicy.freeMaxWalls)面まで）")
+                }
             }
         }
         .navigationTitle(room.name)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    isAddingWall = true
+                    requestAddWall()
                 } label: {
                     Label("壁を追加", systemImage: "plus")
                 }
@@ -51,6 +69,10 @@ struct RoomDetailView: View {
             }
             .presentationDetents([.medium, .large])
         }
+        .paywallSheet(
+            isPresented: $isPaywallPresented,
+            reason: "無料版で登録できる壁は全部屋で\(ProPlanPolicy.freeMaxWalls)面までです。"
+        )
     }
 
     private func deleteWalls(at offsets: IndexSet) {

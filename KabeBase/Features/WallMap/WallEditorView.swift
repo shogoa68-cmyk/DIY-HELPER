@@ -13,7 +13,11 @@ struct WallEditorView: View {
     }
 
     @Bindable var wall: WallSurface
+    /// 計算結果から開いたとき：次に置くピンにこの結果を書き写す
+    var placingRecord: DiyCalcRecord? = nil
+
     @Environment(\.modelContext) private var modelContext
+    @Environment(ProStore.self) private var proStore
 
     @State private var model = WallEditorModel()
     @State private var image: UIImage?
@@ -27,6 +31,11 @@ struct WallEditorView: View {
     @State private var editingAnnotation: WallAnnotation?
     /// シートを閉じたあとで消す印（開いているシートが消えた印を触らないように）
     @State private var annotationToDelete: WallAnnotation?
+    @State private var hasPlacedRecord = false
+    @State private var isPaywallPresented = false
+
+    /// まだピンに書き写していない計算結果
+    private var pendingRecord: DiyCalcRecord? { hasPlacedRecord ? nil : placingRecord }
 
     private var imageSize: CGSize { CGSize(width: wall.imagePixelWidth, height: wall.imagePixelHeight) }
 
@@ -62,6 +71,15 @@ struct WallEditorView: View {
         .onChange(of: photoItem) { _, newItem in
             Task { await importPhoto(newItem) }
         }
+        .onAppear {
+            if placingRecord != nil, !hasPlacedRecord, wall.photoFileName != nil {
+                model.mode = .pin
+            }
+        }
+        .paywallSheet(
+            isPresented: $isPaywallPresented,
+            reason: "無料版で置けるピンは1つの壁に\(ProPlanPolicy.freeMaxPinsPerWall)個までです。"
+        )
         .task(id: wall.photoFileName) {
             image = wall.photoFileName.flatMap { ImageStore.shared.load(fileName: $0) }
         }
@@ -127,7 +145,10 @@ struct WallEditorView: View {
                 Label("まず「縮尺」モードで、長さがわかる2点をタップしてください", systemImage: "ruler")
                     .bannerStyle(tint: .purple)
             }
-            if let hint = model.hintText {
+            if let pendingRecord, model.mode == .pin {
+                Label("「\(pendingRecord.title)」を記録する場所をタップ", systemImage: "mappin.and.ellipse")
+                    .bannerStyle(tint: .orange)
+            } else if let hint = model.hintText {
                 Label(hint, systemImage: model.mode.systemImage)
                     .bannerStyle(tint: .accentColor)
             }
@@ -203,9 +224,17 @@ struct WallEditorView: View {
             break
 
         case .placePin(let p):
-            let pinCount = wall.annotations.filter { $0.kind == .pin }.count
+            let pinCount = wall.pins.count
+            guard ProPlanPolicy.canAddPin(currentPinCount: pinCount, isPro: proStore.isPro) else {
+                isPaywallPresented = true
+                return
+            }
             let pin = WallAnnotation(kind: .pin, x: p.x, y: p.y, title: "ピン\(pinCount + 1)")
             pin.restoration = .puttyRequired
+            if let pendingRecord {
+                pin.apply(pendingRecord)
+                hasPlacedRecord = true
+            }
             add(pin)
             editingAnnotation = pin
 

@@ -4,6 +4,7 @@ import SwiftData
 @main
 struct KabeBaseApp: App {
     let container: ModelContainer
+    @State private var proStore = ProStore()
 
     init() {
         do {
@@ -16,6 +17,8 @@ struct KabeBaseApp: App {
     var body: some Scene {
         WindowGroup {
             RootTabView()
+                .environment(proStore)
+                .task { await proStore.start() }
         }
         .modelContainer(container)
     }

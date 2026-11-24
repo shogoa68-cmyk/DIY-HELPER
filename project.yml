@@ -46,6 +46,9 @@ schemes:
     build:
       targets:
         KabeBase: all
+    run:
+      # シミュレータで課金をテストするためのローカル設定（本物のお金は動かない）
+      storeKitConfiguration: KabeBase.storekit
     test:
       targets:
         - KabeBaseTests

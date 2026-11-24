@@ -7,6 +7,8 @@ struct FasteningNavigatorView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var model = FasteningNavigatorModel()
     @State private var toastMessage: String?
+    /// 壁マップに記録するために保存した計算
+    @State private var recordToPlace: DiyCalcRecord?
 
     var body: some View {
         NavigationStack {
@@ -31,6 +33,9 @@ struct FasteningNavigatorView: View {
             }
             .navigationTitle("ビス・下穴ナビ")
             .saveToast($toastMessage)
+            .sheet(item: $recordToPlace) { record in
+                WallPickerSheet(record: record)
+            }
         }
     }
 
@@ -118,26 +123,32 @@ struct FasteningNavigatorView: View {
                 .disabled(!calculation.result.hasPurchasableItem)
             }
 
-            // Step 4 で壁マップのピンに転記できるようにする
-            Button {} label: {
-                Label("壁マップに記録（準備中）", systemImage: "mappin.and.ellipse")
+            Button {
+                recordToPlace = save(calculation, toShoppingList: false, showsToast: false)
+            } label: {
+                Label("壁マップに記録", systemImage: "mappin.and.ellipse")
                     .frame(maxWidth: .infinity, minHeight: 32)
             }
             .buttonStyle(.bordered)
-            .disabled(true)
+            .disabled(!calculation.result.hasPurchasableItem)
         }
     }
 
-    private func save(_ calculation: FasteningCalculation, toShoppingList: Bool) {
+    @discardableResult
+    private func save(_ calculation: FasteningCalculation, toShoppingList: Bool, showsToast: Bool = true) -> DiyCalcRecord {
         let record = DiyCalcRecord.make(from: calculation)
         record.isInShoppingList = toShoppingList
         modelContext.insert(record)
         try? modelContext.save()
-        toastMessage = toShoppingList ? "買い物メモに追加しました" : "履歴に保存しました"
+        if showsToast {
+            toastMessage = toShoppingList ? "買い物メモに追加しました" : "履歴に保存しました"
+        }
+        return record
     }
 }
 
 #Preview {
     FasteningNavigatorView()
+        .environment(ProStore(previewIsPro: false))
         .modelContainer(try! AppSchema.makeContainer(inMemory: true))
 }

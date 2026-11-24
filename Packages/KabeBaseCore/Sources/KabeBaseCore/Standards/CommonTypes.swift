@@ -27,6 +27,16 @@ public enum LoadClass: String, CaseIterable, Codable, Sendable, Identifiable {
         }
     }
 
+    /// 重さの上限の目安（kg）。20kg超は上限なしで nil。
+    public var upperKg: Double? {
+        switch self {
+        case .light: return 3
+        case .medium: return 10
+        case .heavy: return 20
+        case .veryHeavy: return nil
+        }
+    }
+
     /// 重いものほど、ビスを少し深く効かせる（mm）
     var extraEmbedMM: Double {
         switch self {

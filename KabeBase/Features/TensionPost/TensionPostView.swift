@@ -13,6 +13,7 @@ struct TensionPostView: View {
     @State private var model = TensionPostModel()
     @State private var toastMessage: String?
     @State private var memoToShow: String?
+    @State private var recordToPlace: DiyCalcRecord?
     @FocusState private var focusedField: Field?
 
     var body: some View {
@@ -37,6 +38,9 @@ struct TensionPostView: View {
                 }
             }
             .saveToast($toastMessage)
+            .sheet(item: $recordToPlace) { record in
+                WallPickerSheet(record: record)
+            }
             .sheet(item: Binding(
                 get: { memoToShow.map(IdentifiedText.init) },
                 set: { memoToShow = $0?.text }
@@ -150,16 +154,28 @@ struct TensionPostView: View {
                 }
             }
             .buttonStyle(.bordered)
+
+            Button {
+                recordToPlace = save(calculation, toShoppingList: false, showsToast: false)
+            } label: {
+                Label("壁マップに記録（柱の位置）", systemImage: "mappin.and.ellipse")
+                    .frame(maxWidth: .infinity, minHeight: 32)
+            }
+            .buttonStyle(.bordered)
         }
     }
 
-    private func save(_ calculation: TensionPostCalculation, toShoppingList: Bool) {
+    @discardableResult
+    private func save(_ calculation: TensionPostCalculation, toShoppingList: Bool, showsToast: Bool = true) -> DiyCalcRecord {
         focusedField = nil
         let record = DiyCalcRecord.make(from: calculation)
         record.isInShoppingList = toShoppingList
         modelContext.insert(record)
         try? modelContext.save()
-        toastMessage = toShoppingList ? "買い物メモに追加しました" : "履歴に保存しました"
+        if showsToast {
+            toastMessage = toShoppingList ? "買い物メモに追加しました" : "履歴に保存しました"
+        }
+        return record
     }
 }
 
@@ -210,5 +226,6 @@ struct TensionPostResultView: View {
 
 #Preview {
     TensionPostView()
+        .environment(ProStore(previewIsPro: false))
         .modelContainer(try! AppSchema.makeContainer(inMemory: true))
 }

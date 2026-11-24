@@ -33,4 +33,9 @@ final class MeasurementParserTests: XCTestCase {
         XCTAssertTrue(FasteningAdvisor.advise(FasteningInput(attached: .oneByFour, target: .twoByFour)).hasPurchasableItem)
         XCTAssertFalse(FasteningAdvisor.advise(FasteningInput(attached: .oneByFour, target: .gypsumBoardOnly(.t12_5), load: .veryHeavy)).hasPurchasableItem)
     }
+
+    func testLoadUpperKg() {
+        XCTAssertEqual(LoadClass.medium.upperKg, 10)
+        XCTAssertNil(LoadClass.veryHeavy.upperKg)
+    }
 }
