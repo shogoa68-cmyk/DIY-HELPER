@@ -23,6 +23,14 @@ public enum FasteningResult: Hashable, Codable, Sendable {
         }
     }
 
+    /// 買い物メモに入れる物があるか
+    public var hasPurchasableItem: Bool {
+        switch self {
+        case .screw(let s): return s.lengthMM != nil
+        case .anchor(let a): return a.primary != nil
+        }
+    }
+
     public var restorationLevel: RestorationLevel {
         switch self {
         case .screw(let s): return s.lengthMM == nil ? .none : .puttyRequired

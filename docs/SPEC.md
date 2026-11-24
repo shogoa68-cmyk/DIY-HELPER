@@ -86,7 +86,7 @@ Room 1 ──cascade──▶ * WallSurface 1 ──cascade──▶ * WallAnnot
 ## 7. 実装ステップ
 
 1. ✅ Step 1：雛形・SwiftData モデル・計算エンジン・XCTest
-2. Step 2：タブ2・タブ3 の SwiftUI 画面（プリセットチップ選択式）
+2. ✅ Step 2：タブ2・タブ3 の SwiftUI 画面（プリセットチップ選択式）。「壁マップに記録」ボタンは Step 4 まで無効表示
 3. Step 3：タブ1 壁マップ（PhotosPicker、ズーム・パン、グリッド、正規化座標ピン）
 4. Step 4：計算→ピン1タップ転記、タブ4、StoreKit 2 Pro 制限
 

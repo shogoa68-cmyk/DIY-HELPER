@@ -21,6 +21,9 @@ Packages/KabeBaseCore/   画面に依存しない計算エンジン＆DIY規格�
   Tests/KabeBaseCoreTests/  計算エンジンのユニットテスト
 KabeBase/                iOS アプリ本体
   App/                   起動・4タブ
+  Components/            チップ選択・折り返しレイアウト・結果カードなど共通部品
+  Features/Fastening/    タブ2 ビス・下穴ナビ
+  Features/TensionPost/  タブ3 2×4突っ張り計算
   Models/                SwiftData モデル（Room / WallSurface / WallAnnotation / DiyCalcRecord）
   Services/ImageStore    写真を Documents に JPEG 保存
 KabeBaseTests/           SwiftData モデルのテスト
@@ -47,6 +50,6 @@ cd Packages/KabeBaseCore && swift test
 ## 開発ステップ
 
 - [x] Step 1：プロジェクト雛形・SwiftData モデル・計算エンジン・ユニットテスト
-- [ ] Step 2：タブ2（ビス・下穴ナビ）とタブ3（2×4突っ張り）の画面
+- [x] Step 2：タブ2（ビス・下穴ナビ）とタブ3（2×4突っ張り）の画面
 - [ ] Step 3：タブ1（壁マップキャンバス）
 - [ ] Step 4：計算→ピン転記、タブ4（履歴・原状回復）、StoreKit 2 の Pro 制限

@@ -15,6 +15,15 @@ public enum GypsumBoardThickness: String, CaseIterable, Codable, Sendable, Ident
         case .t12_5: return 12.5
         }
     }
+
+    public var displayName: String { "\(MMFormatter.string(thicknessMM))mm" }
+
+    public var usage: String {
+        switch self {
+        case .t9_5: return "一般的な壁・天井"
+        case .t12_5: return "遮音・耐火・標準壁"
+        }
+    }
 }
 
 /// 取り付ける材（手前側。ビスの頭がある側）
@@ -45,6 +54,16 @@ public enum AttachedMaterial: Hashable, Codable, Sendable {
         case .twoByFour: return "2×4材（38mm）"
         case .board(let t): return "合板・集成材 \(MMFormatter.string(t))mm"
         case .metalBracket(let t): return "金具 \(MMFormatter.string(t))mm"
+        }
+    }
+
+    /// チップ用の短い名前
+    public var shortName: String {
+        switch self {
+        case .oneByFour: return "1×4"
+        case .twoByFour: return "2×4"
+        case .board(let t): return "板 \(MMFormatter.string(t))mm"
+        case .metalBracket: return "金具"
         }
     }
 
